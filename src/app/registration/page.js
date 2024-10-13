@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import Swal from "sweetalert2";
+import SocialLogin from "@/components/SocialLogin";
 
 const Registration = () => {
-  const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const {
@@ -29,15 +30,19 @@ const Registration = () => {
       });
       const result = await response.json();
       if (response.ok) {
-        alert(result.message);
+        Swal.fire({
+          icon: "success",
+          text: result.message,
+        });
         router.push("/");
-      } else if (response.status === 409) {
-        setMessage(result.error);
       } else {
-        throw new Error("Something went wrong");
+        throw new Error(result.error);
       }
     } catch (error) {
-      alert(error.message);
+      Swal.fire({
+        icon: "error",
+        text: error.message ? error.message : "Something went wrong",
+      });
     }
   };
 
@@ -58,21 +63,16 @@ const Registration = () => {
             maxLength={12}
             {...register("name", {
               required: "Name is required",
-
               onChange: (e) => {
                 setValue("name", e.target.value.replace(/[^a-zA-Z\s]/g, ""));
-                setMessage("");
               },
             })}
           />
-          {errors.name ? (
+          {errors.name && (
             <div style={{ color: "red", marginTop: "0.3rem" }}>
               {errors.name.message}
             </div>
-          ) : (
-            ""
           )}
-          <div style={{ color: "red", marginTop: "0.3rem" }}>{message}</div>
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
@@ -90,15 +90,12 @@ const Registration = () => {
                 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 message: "Provide valid email address",
               },
-              onChange: () => setMessage(""),
             })}
           />
-          {errors.email ? (
+          {errors.email && (
             <div style={{ color: "red", marginTop: "0.3rem" }}>
               {errors.email.message}
             </div>
-          ) : (
-            ""
           )}
         </div>
         <div className="mb-3">
@@ -119,7 +116,6 @@ const Registration = () => {
                 message:
                   "Password contains at least one upper case, lower case, number and special character",
               },
-              onChange: () => setMessage(""),
             })}
           />
           <span
@@ -135,12 +131,10 @@ const Registration = () => {
           >
             {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
           </span>
-          {errors.password ? (
+          {errors.password && (
             <div style={{ color: "red", marginTop: "0.3rem" }}>
               {errors.password.message}
             </div>
-          ) : (
-            ""
           )}
         </div>
         <div className="mb-3">
@@ -162,7 +156,6 @@ const Registration = () => {
                   return "Password and confirm password does not match";
                 }
               },
-              onChange: () => setMessage(""),
             })}
           />
           <span
@@ -178,21 +171,21 @@ const Registration = () => {
           >
             {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
           </span>
-          {errors.confirmPassword ? (
+          {errors.confirmPassword && (
             <div style={{ color: "red", marginTop: "0.3rem" }}>
               {errors.confirmPassword.message}
             </div>
-          ) : (
-            ""
           )}
         </div>
         <button type="submit" className="btn btn-primary">
           Register
         </button>
       </form>
-      <Link href="/">
-        <div className="mt-2">Alraedy a user click here to Login</div>
-      </Link>
+      <SocialLogin />
+      <div className="d-flex mt-2">
+        <div className="me-2">Already have an account?</div>
+        <Link href="/">Login</Link>
+      </div>
     </div>
   );
 };

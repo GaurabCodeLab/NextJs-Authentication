@@ -16,7 +16,6 @@ const POST = async (req) => {
           { status: 401 }
         );
       }
-
       const isMatch = await bcrypt.compare(password, isValidUser.password);
       if (!isMatch) {
         return NextResponse.json(
@@ -37,7 +36,6 @@ const POST = async (req) => {
       );
     }
   } catch (error) {
-    console.log("catch chala");
     return NextResponse.json(error, { status: 500 });
   }
 };

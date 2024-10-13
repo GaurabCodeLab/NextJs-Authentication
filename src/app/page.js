@@ -4,42 +4,24 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form";
+import SocialLogin from "@/components/SocialLogin";
+import { doCredentialsLogin } from "./actions";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
-  const [pswMessage, setPswMessage] = useState("");
   const router = useRouter();
-
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
+
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:1634/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        localStorage.setItem("token", result.token);
-        alert("Login successfully");
-        router.push("/protected");
-      } else if (response.status === 404) {
-        setMessage(result.error);
-      } else if (response.status === 401) {
-        setPswMessage(result.error);
-      } else {
-        throw new Error("Something went wrong");
-      }
-    } catch (error) {
-      alert(error);
-    }
+      const response = await doCredentialsLogin(data);
+      router.push("/home");
+      console.log("response hai", response);
+    } catch (error) {}
   };
 
   return (
@@ -62,15 +44,13 @@ const Login = () => {
                 value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 message: "Provide valid email address",
               },
-              onChange: () => setMessage(""),
             })}
           />
-          <div style={{ color: "red", marginTop: "0.5rem" }}>{message}</div>
-          {errors.email ? (
+          {errors.email && (
             <div style={{ color: "red", marginTop: "0.5rem" }}>
               {errors.email.message}
             </div>
-          ) : null}
+          )}
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
@@ -90,7 +70,6 @@ const Login = () => {
                 message:
                   "Password contains at least one upper case, lower case, number and special character",
               },
-              onChange: () => setMessage(""),
             })}
           />
           <span
@@ -106,20 +85,21 @@ const Login = () => {
           >
             {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
           </span>
-          {errors.password ? (
+          {errors.password && (
             <div style={{ color: "red", marginTop: "0.5rem" }}>
               {errors.password.message}
             </div>
-          ) : null}
-          <div style={{ color: "red", marginTop: "0.5rem" }}>{pswMessage}</div>
+          )}
         </div>
         <button type="submit" className="btn btn-primary">
           Login
         </button>
       </form>
-      <Link href="/registration">
-        <div className="mt-2">Not a user click here to Registration</div>
-      </Link>
+      <SocialLogin />
+      <div className="d-flex mt-2">
+        <div className="me-2">Don't you have an account?</div>
+        <Link href="/registration">Register</Link>
+      </div>
     </div>
   );
 };
