@@ -6,6 +6,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form";
 import SocialLogin from "@/components/SocialLogin";
 import { doCredentialsLogin } from "./actions";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,10 +19,14 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await doCredentialsLogin(data);
+      await doCredentialsLogin(data);
       router.push("/home");
-      console.log("response hai", response);
-    } catch (error) {}
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        text: "Something went wrong",
+      });
+    }
   };
 
   return (
@@ -33,6 +38,7 @@ const Login = () => {
             Email address
           </label>
           <input
+            name="email"
             type="email"
             className="form-control"
             id="exampleInputEmail1"
@@ -57,6 +63,7 @@ const Login = () => {
             Password
           </label>
           <input
+            name="password"
             type={showPassword ? "text" : "password"}
             className="form-control"
             id="exampleInputPassword1"

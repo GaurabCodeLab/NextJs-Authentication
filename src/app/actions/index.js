@@ -10,16 +10,7 @@ const doGitHubLogin = async (formData) => {
 };
 
 const doCredentialsLogin = async (formData) => {
-  try {
-    const response = await signIn("credentials", {
-      email: formData?.email,
-      password: formData?.password,
-      redirect: false,
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  await signIn("credentials", formData);
 };
 
 export { dologout, doGitHubLogin, doCredentialsLogin };
