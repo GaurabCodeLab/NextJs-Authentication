@@ -10,7 +10,11 @@ const doGitHubLogin = async (formData) => {
 };
 
 const doCredentialsLogin = async (formData) => {
-  await signIn("credentials", formData);
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    throw error;
+  }
 };
 
 export { dologout, doGitHubLogin, doCredentialsLogin };

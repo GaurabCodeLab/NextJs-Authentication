@@ -36,10 +36,7 @@ const { auth, handlers, signIn, signOut } = NextAuth({
             throw new Error("Missing required field");
           }
         } catch (error) {
-          Swal.fire({
-            icon: "error",
-            text: error.message ? error.message : "Something went wrong",
-          });
+          throw error.message;
         }
       },
     }),

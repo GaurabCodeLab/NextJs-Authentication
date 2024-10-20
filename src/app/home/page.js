@@ -21,7 +21,6 @@ const fetchUsersList = async () => {
 const Home = async () => {
   const usersList = await fetchUsersList();
   const session = await auth();
-  console.log("session hai", session);
   if (!session?.user) {
     redirect("/");
   }

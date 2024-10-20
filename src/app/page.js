@@ -24,7 +24,9 @@ const Login = () => {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        text: "Something went wrong",
+        text: error.message.split(".")[0]
+          ? error.message.split(".")[0]
+          : "Something went wrong",
       });
     }
   };
